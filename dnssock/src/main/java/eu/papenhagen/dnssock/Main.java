@@ -26,24 +26,68 @@ public class Main {
     private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-
         List<Domain> list = readJSON();
         list.forEach((d) -> {
             String ip = d.getIp().getIp0() + "." + d.getIp().getIp1() + "." + d.getIp().getIp2() + "." + d.getIp().getIp3();
             get("/" + d.getName(), (req, res) -> "" + ip);
+            get("/:" + d.getName() + "/:psw", (request, response) -> {
+                String psw = request.params(":psw");
+                String user = request.params(":"+ d.getName());
+                String renewIp = request.ip();
+                Ip opIp = new Ip();
+                
+                int field0 = Integer.parseInt(renewIp.split("\\.")[0]);
+                int field1 = Integer.parseInt(renewIp.split("\\.")[0]);
+                int field2 = Integer.parseInt(renewIp.split("\\.")[0]);
+                int field3 = Integer.parseInt(renewIp.split("\\.")[0]);
+                
+                if( checkPsw(user, psw)){
+                    //fill the new ip into domain
+                    opIp.setIp0(field0);
+                    opIp.setIp1(field1);
+                    opIp.setIp2(field2);
+                    opIp.setIp3(field3);
+                    
+                    //set ip to domain
+                    d.setIp(opIp);
+                    
+                    //return the new ip
+                    return ip;
+                }
+                
+                
+                
+                response.status(400);
+                return "No user with psw found";
+
+
+            });
+            //e404
+            get("/", (req, res) -> "0.0.0.0");
+
         });
 
         System.out.println("http://localhost:4567/hello");
 //        get("/hello", (req, res) -> "Hello World");
     }
-    
-    
+
+    private static Boolean checkPsw(String user, String psw) {
+        List<Domain> list = readJSON();
+        //check if the user/psw are in the json file
+        return list.stream().filter((domain) -> (domain.getName().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
+    }
+
+    private String changeIp(String ip2) {
+        String ip = "";
+
+        return ip;
+    }
 
     /**
      * read the JSON
      *
-     * @return the JSON as List of Domain
-     * //TODO doamins.json from resoruce haveto copyed to a good place
+     * @return the JSON as List of Domain //TODO doamins.json from resoruce
+     * haveto copyed to a good place
      */
     private static List<Domain> readJSON() {
         String fileinput = "";
@@ -57,7 +101,6 @@ public class Main {
 
         return list;
     }
-        
 
     /**
      * parsing the JSON file into a List of Domain

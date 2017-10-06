@@ -1,6 +1,6 @@
 [{
         "name": "hello",
-        "password": null,
+        "password": "noo",
         "ip": {
             "ip0": 127,
             "ip1": 0,
@@ -11,7 +11,7 @@
     },
     {
         "name": "test",
-        "password": null,
+        "password": "joo",
         "ip": {
             "ip0": 127,
             "ip1": 0,
