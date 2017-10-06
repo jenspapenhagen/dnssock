@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;
@@ -51,6 +52,9 @@ public class Main {
                     //set ip to domain
                     d.setIp(opIp);
                     
+                    
+                    
+                    
                     //return the new ip
                     return ip;
                 }
@@ -77,11 +81,27 @@ public class Main {
         return list.stream().filter((domain) -> (domain.getName().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
     }
 
-    private String changeIp(String ip2) {
-        String ip = "";
+    private static void saveJSON(Domain d){
+        //get all Domain
+        List<Domain> list = readJSON();
+        //add given one
+        for (Domain domain : list) {
+            if(domain.getName().equals(d.getName())){
+                domain.setIp(d.getIp());
+                LocalDateTime lastChange = LocalDateTime.now();
+                domain.setLastChange(lastChange.toString());
+                //TODO postion in list for replace
+                
+                
+            }
+        }
 
-        return ip;
+        
+
+        
     }
+    
+    
 
     /**
      * read the JSON
