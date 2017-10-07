@@ -88,7 +88,7 @@ public class Main {
         return list.stream().filter((domain) -> (domain.getId().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
     }
 
-    private List<ExportNode> convertDomainToExportNode() {
+    private static List<ExportNode> convertDomainToExportNode() {
         //get all Domain
         List<Node> list = JsonHandler.getInstance().readJSON();
         //build new Exportlist of the existen private domain.json
