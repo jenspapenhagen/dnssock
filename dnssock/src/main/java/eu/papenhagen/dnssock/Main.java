@@ -6,12 +6,6 @@
 package eu.papenhagen.dnssock;
 
 import static spark.Spark.*;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import java.io.IOException;
-import java.lang.reflect.Type;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,43 +21,40 @@ public class Main {
     private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(Main.class);
 
     public static void main(String[] args) {
-        List<Domain> list = readJSON();
+        List<Domain> list = JsonHandler.getInstance().readJSON();
         list.forEach((d) -> {
             String ip = d.getIp().getIp0() + "." + d.getIp().getIp1() + "." + d.getIp().getIp2() + "." + d.getIp().getIp3();
             get("/" + d.getId(), (req, res) -> "" + ip);
             get("/:" + d.getId() + "/:psw", (request, response) -> {
                 String psw = request.params(":psw");
-                String user = request.params(":"+ d.getId());
+                String user = request.params(":" + d.getId());
                 String renewIp = request.ip();
                 Ip opIp = new Ip();
-                
+
                 int field0 = Integer.parseInt(renewIp.split("\\.")[0]);
                 int field1 = Integer.parseInt(renewIp.split("\\.")[0]);
                 int field2 = Integer.parseInt(renewIp.split("\\.")[0]);
                 int field3 = Integer.parseInt(renewIp.split("\\.")[0]);
-                
-                if( checkPsw(user, psw)){
+
+                if (checkPsw(user, psw)) {
                     //fill the new ip into domain
                     opIp.setIp0(field0);
                     opIp.setIp1(field1);
                     opIp.setIp2(field2);
                     opIp.setIp3(field3);
-                    
+
                     //set ip to domain
                     d.setIp(opIp);
                     
-                    
-                    
-                    
+                    //save List of Domain to file
+                    JsonHandler.getInstance().saveJSON(d);
+
                     //return the new ip
                     return ip;
                 }
-                
-                
-                
+
                 response.status(400);
                 return "No user with psw found";
-
 
             });
             //e404
@@ -71,70 +62,39 @@ public class Main {
 
         });
 
-        System.out.println("http://localhost:4567/hello");
+        System.out.println("http://localhost:4567/test");
 //        get("/hello", (req, res) -> "Hello World");
     }
 
     private static Boolean checkPsw(String user, String psw) {
-        List<Domain> list = readJSON();
+        List<Domain> list = JsonHandler.getInstance().readJSON();
         //check if the user/psw are in the json file
         return list.stream().filter((domain) -> (domain.getId().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
     }
 
-    private static void saveJSON(Domain d){
+
+    private List<ExportDomain> convertDomainToExportDomain() {
         //get all Domain
-        List<Domain> list = readJSON();
-        //add given one
-        for (Domain domain : list) {
-            if(domain.getId().equals(d.getId())){
-                domain.setIp(d.getIp());
-                LocalDateTime lastChange = LocalDateTime.now();
-                domain.setLastChange(lastChange.toString());
-                //TODO postion in list for replace
-                
-                
-            }
-        }
-
+        List<Domain> list = JsonHandler.getInstance().readJSON();
+       //build new Exportlist of the existen private domain.json
+        List<ExportDomain> exportlist = new ArrayList<>(list.size());
         
+        list.stream().map((d) -> {
+            ExportDomain exportdomain = new ExportDomain();
+            
+            //set ID and IP and lastChange TimeStamp
+            exportdomain.setId(d.getId());
+            exportdomain.setIp(d.getIp());
+            exportdomain.setLastChange(d.getLastChange());
+            
+            return exportdomain;
+        }).forEachOrdered((exportdomain) -> {
+            //add to list
+            exportlist.add(exportdomain);
+        });
 
-        
+        return exportlist;
     }
     
-    
-
-    /**
-     * read the JSON
-     *
-     * @return the JSON as List of Domain //TODO doamins.json from resoruce
-     * haveto copyed to a good place
-     */
-    private static List<Domain> readJSON() {
-        String fileinput = "";
-        try {
-            fileinput = new String(Files.readAllBytes(Paths.get("C:\\Go\\domains.json")));
-        } catch (IOException ex) {
-            LOG.error(ex.getMessage());
-        }
-        List<Domain> list = new ArrayList<>();
-        list = parseLocalStatusJsonFromFile(fileinput);
-
-        return list;
-    }
-
-    /**
-     * parsing the JSON file into a List of Domain
-     *
-     * @param fileinput
-     * @return
-     */
-    public static List<Domain> parseLocalStatusJsonFromFile(String fileinput) {
-        Gson gson = new Gson();
-        Type founderListType = new TypeToken<ArrayList<Domain>>() {
-        }.getType();
-        List<Domain> founderList = gson.fromJson(fileinput, founderListType);
-
-        return founderList;
-    }
 
 }
