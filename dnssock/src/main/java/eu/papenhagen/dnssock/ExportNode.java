@@ -16,11 +16,11 @@ public class ExportNode {
     @Setter
     private String id;
     
-    @Setter
     @Getter
-    private Ip ip;
-    
     @Setter
+    private String ip;
+
     @Getter
+    @Setter
     private String lastChange;
 }

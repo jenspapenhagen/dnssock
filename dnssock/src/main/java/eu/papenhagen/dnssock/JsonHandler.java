@@ -31,10 +31,9 @@ public class JsonHandler {
 
     private final static Gson gson = new Gson();;
 
-    private final String filepath;
+    private final static String filepath = "C:\\Go\\domains.json";
 
     public JsonHandler() {
-        this.filepath = "C:\\Go\\domains.json";
         instance = this;
     }
 
@@ -48,7 +47,7 @@ public class JsonHandler {
      * @return the JSON as List of Node //TODO doamins.json from resoruce
      * haveto copyed to a good place
      */
-    public List<Node> readJSON() {
+    public static List<Node> readJSON() {
         String fileinput = "";
         try {
             fileinput = new String(Files.readAllBytes(Paths.get(filepath)));
@@ -66,7 +65,7 @@ public class JsonHandler {
      *
      * @param node
      */
-    public void saveJSON(Node node) {
+    public static void saveJSON(Node node) {
         //get all Domain
         List<Node> list = readJSON();
         //add given one
@@ -116,7 +115,7 @@ public class JsonHandler {
      * @param fileinput
      * @return
      */
-    private List<Node> parseLocalDomainJsonFromFile(String fileinput) {
+    private static List<Node> parseLocalDomainJsonFromFile(String fileinput) {
         Type founderListType = new TypeToken<ArrayList<Node>>() {
         }.getType();
         List<Node> founderList = gson.fromJson(fileinput, founderListType);
