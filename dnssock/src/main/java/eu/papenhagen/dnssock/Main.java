@@ -44,9 +44,9 @@ public class Main {
                 String psw = request.params(":psw");
                 String renewIp = request.ip();
 
-                System.out.println("id " + id);
-                System.out.println("psw " + psw);
-                System.out.println("renewIp " + renewIp);
+                LOG.debug("id " + id);
+                LOG.debug("psw " + psw);
+                LOG.debug("renewIp " + renewIp);
 
                 if (NodeSerivce.getInstance().checkPassword(id, psw)) {
                     //fill the new ip into domain

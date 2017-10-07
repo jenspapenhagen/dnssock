@@ -1,23 +1,14 @@
-[{
-        "id": "hello",
-        "password": "noo",
-        "ip": {
-            "ip0": 127,
-            "ip1": 0,
-            "ip2": 0,
-            "ip3": 1
-        },
-        "lastChange": "datum"
-    },
-    {
-        "id": "test",
-        "password": "joo",
-        "ip": {
-            "ip0": 127,
-            "ip1": 0,
-            "ip2": 0,
-            "ip3": 5
-        },
-        "lastChange": "datum"
-    }
+[
+  {
+    "id": "admin",
+    "password": "noo",
+    "ip": "127.0.0.1",
+    "lastChange": "2017-10-07T16:38:08.594"
+  },
+  {
+    "id": "test",
+    "password": "noo",
+    "ip": "127.0.0.18",
+    "lastChange": "2017-10-07T14:28:09.515"
+  }
 ]
