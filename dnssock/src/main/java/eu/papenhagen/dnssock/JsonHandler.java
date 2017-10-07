@@ -80,15 +80,6 @@ public class JsonHandler {
             }
             
         }
-        
-//        list.stream().filter((Node n) -> (n.getId().equals(node.getId()))).forEachOrdered((Node no) -> {
-//            LocalDateTime lastChange = LocalDateTime.now();
-//
-//            //change IP and lastChange timestamp
-//            no.setIp(node.getIp());
-//            no.setLastChange(lastChange.toString());
-//        });
-
         String output = gson.toJson(list);
 
         File file = new File(filepath);

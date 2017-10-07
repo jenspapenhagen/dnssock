@@ -34,10 +34,8 @@ public class Main {
         list.forEach(new Consumer<Node>() {
             @Override
             public void accept(Node n) {
-                String ipAsString = n.getIp().getHostAddress();
-
                 //get singel IP for one node
-                get("/" + n.getId(), (Request request, Response response) -> "" + ipAsString);
+                get("/" + n.getId(), (Request request, Response response) -> "" + n.getIp());
 
                 //get all Node and IPs
                 get("/all", (Request request, Response response) -> {
@@ -57,11 +55,7 @@ public class Main {
 
                     if (checkPsw(id, psw)) {
                         //fill the new ip into domain
-                        if (renewIp.contains(":")) {
-                            n.setIp(Inet6Address.getByName(renewIp));
-                        } else {
-                            n.setIp(InetAddress.getByName(renewIp));
-                        }
+                        n.setIp(renewIp);
 
                         //save List of Domain to file
                         JsonHandler.getInstance().saveJSON(n);
@@ -80,6 +74,14 @@ public class Main {
 
                 //set HTTPS
                 //secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
+                //set none standard Port
+                //port(8080);
+                //threadpool
+                int maxThreads = 8;
+                int minThreads = 2;
+                int timeOutMillis = 30000;
+                threadPool(maxThreads, minThreads, timeOutMillis);
+
             }
         });
 
@@ -103,7 +105,7 @@ public class Main {
 
             //set ID and IP and lastChange TimeStamp
             exportnode.setId(node.getId());
-            exportnode.setIp(node.getIp().getHostAddress());
+            exportnode.setIp(node.getIp());
             exportnode.setLastChange(node.getLastChange());
 
             return exportnode;

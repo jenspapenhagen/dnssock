@@ -5,8 +5,6 @@
  */
 package eu.papenhagen.dnssock;
 
-import java.net.InetAddress;
-
 import lombok.*;
 
 /**
@@ -20,7 +18,7 @@ public class Node {
     private String password;
     @Setter
     @Getter
-    private InetAddress ip;
+    private String ip;
     @Setter
     @Getter
     private String lastChange;
