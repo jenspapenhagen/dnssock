@@ -10,7 +10,6 @@ import com.google.gson.reflect.TypeToken;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -47,37 +46,37 @@ public class JsonHandler {
     /**
      * read the JSON
      *
-     * @return the JSON as List of Domain //TODO doamins.json from resoruce
+     * @return the JSON as List of Node //TODO doamins.json from resoruce
      * haveto copyed to a good place
      */
-    public List<Domain> readJSON() {
+    public List<Node> readJSON() {
         String fileinput = "";
         try {
             fileinput = new String(Files.readAllBytes(Paths.get(filepath)));
         } catch (IOException ex) {
             LOG.error(ex.getMessage());
         }
-        List<Domain> list = new ArrayList<>();
+        List<Node> list = new ArrayList<>();
         list = parseLocalDomainJsonFromFile(fileinput);
 
         return list;
     }
 
     /**
-     * Save the given domain into the private file
+     * Save the given node into the private file
      *
-     * @param dom
+     * @param node
      */
-    public void saveJSON(Domain dom) {
+    public void saveJSON(Node node) {
         //get all Domain
-        List<Domain> list = readJSON();
+        List<Node> list = readJSON();
         //add given one
-        list.stream().filter((domain) -> (domain.getId().equals(dom.getId()))).forEachOrdered((domain) -> {
+        list.stream().filter((Node n) -> (n.getId().equals(node.getId()))).forEachOrdered((Node no) -> {
             LocalDateTime lastChange = LocalDateTime.now();
 
             //change IP and lastChange timestamp
-            domain.setIp(dom.getIp());
-            domain.setLastChange(lastChange.toString());
+            no.setIp(node.getIp());
+            no.setLastChange(lastChange.toString());
         });
 
         String output = gson.toJson(list);
@@ -105,7 +104,7 @@ public class JsonHandler {
      * @param list
      * @return
      */
-    public String exportToJSON(List<ExportDomain> list) {
+    public String exportToJSON(List<ExportNode> list) {
         String output = gson.toJson(list);
 
         return output;
@@ -117,10 +116,10 @@ public class JsonHandler {
      * @param fileinput
      * @return
      */
-    private List<Domain> parseLocalDomainJsonFromFile(String fileinput) {
-        Type founderListType = new TypeToken<ArrayList<Domain>>() {
+    private List<Node> parseLocalDomainJsonFromFile(String fileinput) {
+        Type founderListType = new TypeToken<ArrayList<Node>>() {
         }.getType();
-        List<Domain> founderList = gson.fromJson(fileinput, founderListType);
+        List<Node> founderList = gson.fromJson(fileinput, founderListType);
 
         return founderList;
     }

@@ -12,7 +12,7 @@ import lombok.*;
  *
  * @author jens.papenhagen
  */
-public class Domain {
+public class Node {
     @Getter
     private String id;
     @Getter

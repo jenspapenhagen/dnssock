@@ -11,7 +11,7 @@ import lombok.*;
  *
  * @author jens.papenhagen
  */
-public class ExportDomain {
+public class ExportNode {
     @Getter
     @Setter
     private String id;

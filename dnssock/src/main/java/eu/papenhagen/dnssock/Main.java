@@ -6,10 +6,11 @@
 package eu.papenhagen.dnssock;
 
 import static spark.Spark.*;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;
+import spark.Request;
+import spark.Response;
 
 /**
  *
@@ -20,14 +21,25 @@ public class Main {
     //start logging
     private final static org.slf4j.Logger LOG = LoggerFactory.getLogger(Main.class);
 
+    /**
+     * simble build of a dnyDNS service why NO Token?
+     *
+     * @param args
+     */
     public static void main(String[] args) {
-        List<Domain> list = JsonHandler.getInstance().readJSON();
-        list.forEach((d) -> {
-            String ip = d.getIp().getIp0() + "." + d.getIp().getIp1() + "." + d.getIp().getIp2() + "." + d.getIp().getIp3();
-            get("/" + d.getId(), (req, res) -> "" + ip);
-            get("/:" + d.getId() + "/:psw", (request, response) -> {
+        List<Node> list = JsonHandler.getInstance().readJSON();
+        list.forEach((Node n) -> {
+            String ipAsString = n.getIp().getIp0() + "." + n.getIp().getIp1() + "." + n.getIp().getIp2() + "." + n.getIp().getIp3();
+            //get singel IP for one node
+            get("/" + n.getId(), (request, response) -> "" + ipAsString);
+            //get all Node and IPs
+            get("/all" + n.getId(), (request, response) -> {
+                return "sssa";
+            });
+            //change the ip
+            get("/:" + n.getId() + "/:psw", (Request request, Response response) -> {
                 String psw = request.params(":psw");
-                String user = request.params(":" + d.getId());
+                String user = request.params(":" + n.getId());
                 String renewIp = request.ip();
                 Ip opIp = new Ip();
 
@@ -44,16 +56,17 @@ public class Main {
                     opIp.setIp3(field3);
 
                     //set ip to domain
-                    d.setIp(opIp);
-                    
+                    n.setIp(opIp);
+
                     //save List of Domain to file
-                    JsonHandler.getInstance().saveJSON(d);
+                    JsonHandler.getInstance().saveJSON(n);
 
                     //return the new ip
-                    return ip;
+                    return ipAsString;
                 }
 
                 response.status(400);
+                LOG.debug("No user with psw found");
                 return "No user with psw found";
 
             });
@@ -67,34 +80,30 @@ public class Main {
     }
 
     private static Boolean checkPsw(String user, String psw) {
-        List<Domain> list = JsonHandler.getInstance().readJSON();
+        List<Node> list = JsonHandler.getInstance().readJSON();
         //check if the user/psw are in the json file
         return list.stream().filter((domain) -> (domain.getId().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
     }
 
-
-    private List<ExportDomain> convertDomainToExportDomain() {
+    private List<ExportNode> convertDomainToExportNode() {
         //get all Domain
-        List<Domain> list = JsonHandler.getInstance().readJSON();
-       //build new Exportlist of the existen private domain.json
-        List<ExportDomain> exportlist = new ArrayList<>(list.size());
-        
+        List<Node> list = JsonHandler.getInstance().readJSON();
+        //build new Exportlist of the existen private domain.json
+        List<ExportNode> exportlist = new ArrayList<>(list.size());
+
         list.stream().map((d) -> {
-            ExportDomain exportdomain = new ExportDomain();
-            
+            ExportNode exportnode = new ExportNode();
+
             //set ID and IP and lastChange TimeStamp
-            exportdomain.setId(d.getId());
-            exportdomain.setIp(d.getIp());
-            exportdomain.setLastChange(d.getLastChange());
-            
-            return exportdomain;
-        }).forEachOrdered((exportdomain) -> {
-            //add to list
-            exportlist.add(exportdomain);
-        });
+            exportnode.setId(d.getId());
+            exportnode.setIp(d.getIp());
+            exportnode.setLastChange(d.getLastChange());
+
+            return exportnode;
+        }).forEachOrdered(exportlist::add //add to list
+        );
 
         return exportlist;
     }
-    
 
 }
