@@ -50,10 +50,11 @@ public class Main {
 
                 if (NodeSerivce.getInstance().checkPassword(id, psw)) {
                     //fill the new ip into domain
-                    n.setIp(renewIp);
+                    Node tempNode = NodeSerivce.getInstance().getNode(id);
+                    tempNode.setIp(renewIp);
 
                     //update the node in the list
-                    NodeSerivce.getInstance().setNode(n);
+                    NodeSerivce.getInstance().setNode(tempNode);
 
                     //return the new ip
                     return renewIp;

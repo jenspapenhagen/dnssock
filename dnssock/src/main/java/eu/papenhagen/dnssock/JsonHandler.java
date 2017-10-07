@@ -42,8 +42,8 @@ public class JsonHandler {
     /**
      * read the JSON
      *
-     * @return the JSON as List of Node //TODO doamins.json from resoruce
-     * haveto copyed to a good place
+     * @return the JSON as List of Node //TODO doamins.json from resoruce haveto
+     * copyed to a good place
      */
     public static List<Node> readJSON() {
         String fileinput = "";
@@ -66,28 +66,28 @@ public class JsonHandler {
     public static void saveJSON(Node node) {
         //get all Domain
         List<Node> list = readJSON();
-        //add given one
+        //add given node
         LocalDateTime lastChange = LocalDateTime.now();
-        for ( int i = 0; i < list.size()-1; i++) {
-            if(list.get(i).getId().equals(node.getId())){
-                list.get(i).setIp(node.getIp());
-                list.get(i).setLastChange(lastChange.toString());
-                
+        for (int i = 0; i <= list.size() - 1; i++) {
+            if (list.get(i).getId().equals(node.getId())) {
+                LOG.debug("id" + i + " " + list.get(i).getId());
+                //set timestamp
+                node.setLastChange(lastChange.toString());
                 //replacethe orginal node in the list
-                list.set(i, list.get(i));
+                list.set(i, node);
             }
-            
+
         }
-        
+
         String output = gson.toJson(list);
         File file = new File(filepath);
         try {
             //delete old file
             file.createNewFile();
-            
+
             FileOutputStream fos = new FileOutputStream(file);
             fos.write(output.getBytes());
-            
+
             //move all to file befor close it
             fos.flush();
             fos.close();
@@ -109,7 +109,5 @@ public class JsonHandler {
 
         return output;
     }
-
-   
 
 }

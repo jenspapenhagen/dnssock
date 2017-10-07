@@ -12,6 +12,7 @@ import lombok.*;
  * @author jens.papenhagen
  */
 public class Node {
+
     @Getter
     private String id;
     @Getter
@@ -22,5 +23,13 @@ public class Node {
     @Setter
     @Getter
     private String lastChange;
-   
+
+    public Node() {
+    }
+
+    public Node(String id, String password) {
+        this.id = id;
+        this.password = password;
+    }
+
 }

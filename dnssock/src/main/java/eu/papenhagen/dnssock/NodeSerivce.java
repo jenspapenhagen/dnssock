@@ -30,38 +30,39 @@ public class NodeSerivce {
     public static List<Node> getAllNodes() {
         return JsonHandler.getInstance().readJSON();
     }
-    
-    public static Node getNode(String id){
+
+    public static Node getNode(String id) {
         List<Node> list = getAllNodes();
         Node output = null;
         for (Node node : list) {
-            if(node.getId().equals(id)){
+            if (node.getId().equals(id)) {
                 return node;
             }
         }
-        
+
         return output;
     }
-    
-    public static void setNode(Node n){
+
+    public static void setNode(Node n) {
         JsonHandler.getInstance().saveJSON(n);
     }
-    
+
     /**
      * check if the user/psw are in the json file
+     *
      * @param id
      * @param psw
-     * @return 
+     * @return
      */
     public static Boolean checkPassword(String id, String psw) {
         Node node = getNode(id);
-        
         return node.getPassword().equals(psw);
     }
-    
+
     /**
      * convert the Node to a exportable Node (without so many data)
-     * @return 
+     *
+     * @return
      */
     public static List<ExportNode> convertNodeToExportNode() {
         //get all Domain
@@ -84,7 +85,7 @@ public class NodeSerivce {
         return exportlist;
     }
 
-     /**
+    /**
      * parsing the JSON file into a List of Domain
      *
      * @param fileinput
