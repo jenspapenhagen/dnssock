@@ -30,10 +30,10 @@ public class Main {
         List<Domain> list = readJSON();
         list.forEach((d) -> {
             String ip = d.getIp().getIp0() + "." + d.getIp().getIp1() + "." + d.getIp().getIp2() + "." + d.getIp().getIp3();
-            get("/" + d.getName(), (req, res) -> "" + ip);
-            get("/:" + d.getName() + "/:psw", (request, response) -> {
+            get("/" + d.getId(), (req, res) -> "" + ip);
+            get("/:" + d.getId() + "/:psw", (request, response) -> {
                 String psw = request.params(":psw");
-                String user = request.params(":"+ d.getName());
+                String user = request.params(":"+ d.getId());
                 String renewIp = request.ip();
                 Ip opIp = new Ip();
                 
@@ -78,7 +78,7 @@ public class Main {
     private static Boolean checkPsw(String user, String psw) {
         List<Domain> list = readJSON();
         //check if the user/psw are in the json file
-        return list.stream().filter((domain) -> (domain.getName().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
+        return list.stream().filter((domain) -> (domain.getId().equals(user))).anyMatch((domain) -> (domain.getPassword().equals(psw)));
     }
 
     private static void saveJSON(Domain d){
@@ -86,7 +86,7 @@ public class Main {
         List<Domain> list = readJSON();
         //add given one
         for (Domain domain : list) {
-            if(domain.getName().equals(d.getName())){
+            if(domain.getId().equals(d.getId())){
                 domain.setIp(d.getIp());
                 LocalDateTime lastChange = LocalDateTime.now();
                 domain.setLastChange(lastChange.toString());
@@ -112,7 +112,7 @@ public class Main {
     private static List<Domain> readJSON() {
         String fileinput = "";
         try {
-            fileinput = new String(Files.readAllBytes(Paths.get("C:\\EAI\\domains.json")));
+            fileinput = new String(Files.readAllBytes(Paths.get("C:\\Go\\domains.json")));
         } catch (IOException ex) {
             LOG.error(ex.getMessage());
         }

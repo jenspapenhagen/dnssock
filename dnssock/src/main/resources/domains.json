@@ -1,5 +1,5 @@
 [{
-        "name": "hello",
+        "id": "hello",
         "password": "noo",
         "ip": {
             "ip0": 127,
@@ -10,7 +10,7 @@
         "lastChange": "datum"
     },
     {
-        "name": "test",
+        "id": "test",
         "password": "joo",
         "ip": {
             "ip0": 127,

@@ -14,7 +14,7 @@ import lombok.*;
  */
 public class Domain {
     @Getter
-    private String name;
+    private String id;
     @Getter
     private String password;
     @Setter
