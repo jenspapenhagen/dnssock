@@ -29,14 +29,13 @@ public class JsonHandler {
 
     private static JsonHandler instance;
 
-    private final Gson gson;
+    private final static Gson gson = new Gson();;
 
     private final String filepath;
 
     public JsonHandler() {
         this.filepath = "C:\\Go\\domains.json";
         instance = this;
-        this.gson = new Gson();
     }
 
     public static JsonHandler getInstance() {
@@ -104,8 +103,9 @@ public class JsonHandler {
      * @param list
      * @return
      */
-    public String exportToJSON(List<ExportNode> list) {
-        String output = gson.toJson(list);
+    public static String exportToJSON(List<ExportNode> list) {
+        String output;
+        output = gson.toJson(list);
 
         return output;
     }
