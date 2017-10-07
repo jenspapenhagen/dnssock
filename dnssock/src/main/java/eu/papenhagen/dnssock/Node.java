@@ -5,7 +5,8 @@
  */
 package eu.papenhagen.dnssock;
 
-import java.time.LocalDateTime;
+import java.net.InetAddress;
+
 import lombok.*;
 
 /**
@@ -19,11 +20,9 @@ public class Node {
     private String password;
     @Setter
     @Getter
-    private Ip ip;
+    private InetAddress ip;
     @Setter
     @Getter
     private String lastChange;
-    //private LocalDateTime lastChange;
-    
    
 }

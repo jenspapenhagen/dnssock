@@ -69,13 +69,25 @@ public class JsonHandler {
         //get all Domain
         List<Node> list = readJSON();
         //add given one
-        list.stream().filter((Node n) -> (n.getId().equals(node.getId()))).forEachOrdered((Node no) -> {
-            LocalDateTime lastChange = LocalDateTime.now();
-
-            //change IP and lastChange timestamp
-            no.setIp(node.getIp());
-            no.setLastChange(lastChange.toString());
-        });
+        LocalDateTime lastChange = LocalDateTime.now();
+        for ( int i = 0; i < list.size()-1; i++) {
+            if(list.get(i).getId().equals(node.getId())){
+                list.get(i).setIp(node.getIp());
+                list.get(i).setLastChange(lastChange.toString());
+                
+                //replacethe orginal node in the list
+                list.set(1, list.get(i));
+            }
+            
+        }
+        
+//        list.stream().filter((Node n) -> (n.getId().equals(node.getId()))).forEachOrdered((Node no) -> {
+//            LocalDateTime lastChange = LocalDateTime.now();
+//
+//            //change IP and lastChange timestamp
+//            no.setIp(node.getIp());
+//            no.setLastChange(lastChange.toString());
+//        });
 
         String output = gson.toJson(list);
 
