@@ -6,14 +6,11 @@
 package eu.papenhagen.dnssock;
 
 import static spark.Spark.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
-import java.net.InetAddress;
-import java.net.Inet6Address;
 
 /**
  *
@@ -30,7 +27,15 @@ public class Main {
      * @param args
      */
     public static void main(String[] args) {
-        List<Node> list = JsonHandler.getInstance().readJSON();
+        //list get only read once
+        List<Node> list = NodeSerivce.getInstance().getAllNodes();
+
+        //threadpool
+        int maxThreads = 8;
+        int minThreads = 2;
+        int timeOutMillis = 30000;
+        threadPool(maxThreads, minThreads, timeOutMillis);
+
         list.forEach(new Consumer<Node>() {
             @Override
             public void accept(Node n) {
@@ -40,7 +45,7 @@ public class Main {
                 //get all Node and IPs
                 get("/all", (Request request, Response response) -> {
                     response.type("application/json");
-                    return JsonHandler.getInstance().exportToJSON(convertDomainToExportNode());
+                    return JsonHandler.getInstance().exportToJSON(NodeSerivce.getInstance().convertNodeToExportNode());
                 });
 
                 //change the ip
@@ -53,12 +58,12 @@ public class Main {
                     System.out.println("psw " + psw);
                     System.out.println("renewIp " + renewIp);
 
-                    if (checkPsw(id, psw)) {
+                    if (NodeSerivce.getInstance().checkPassword(id, psw)) {
                         //fill the new ip into domain
                         n.setIp(renewIp);
 
-                        //save List of Domain to file
-                        JsonHandler.getInstance().saveJSON(n);
+                        //update the node in the list
+                        NodeSerivce.getInstance().setNode(n);
 
                         //return the new ip
                         return renewIp;
@@ -76,43 +81,10 @@ public class Main {
                 //secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
                 //set none standard Port
                 //port(8080);
-                //threadpool
-                int maxThreads = 8;
-                int minThreads = 2;
-                int timeOutMillis = 30000;
-                threadPool(maxThreads, minThreads, timeOutMillis);
-
             }
         });
 
         System.out.println("http://localhost:4567/test");
-    }
-
-    private static Boolean checkPsw(String id, String psw) {
-        List<Node> list = JsonHandler.getInstance().readJSON();
-        //check if the user/psw are in the json file
-        return list.stream().filter((Node node) -> (node.getId().equals(id))).anyMatch((Node node) -> (node.getPassword().equals(psw)));
-    }
-
-    private static List<ExportNode> convertDomainToExportNode() {
-        //get all Domain
-        List<Node> list = JsonHandler.getInstance().readJSON();
-        //build new Exportlist of the existen private domain.json
-        List<ExportNode> exportlist = new ArrayList<>(list.size());
-
-        list.stream().map((Node node) -> {
-            ExportNode exportnode = new ExportNode();
-
-            //set ID and IP and lastChange TimeStamp
-            exportnode.setId(node.getId());
-            exportnode.setIp(node.getIp());
-            exportnode.setLastChange(node.getLastChange());
-
-            return exportnode;
-        }).forEachOrdered(exportlist::add //add to list
-        );
-
-        return exportlist;
     }
 
 }

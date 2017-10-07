@@ -29,7 +29,7 @@ public class JsonHandler {
 
     private static JsonHandler instance;
 
-    private final static Gson gson = new Gson();;
+    private final static Gson gson = new Gson();
 
     private final static String filepath = "C:\\Go\\domains.json";
 
@@ -55,7 +55,7 @@ public class JsonHandler {
             LOG.error(ex.getMessage());
         }
         List<Node> list = new ArrayList<>();
-        list = parseLocalDomainJsonFromFile(fileinput);
+        list = NodeSerivce.getInstance().parseLocalDomainJsonFromFile(fileinput);
 
         return list;
     }
@@ -76,12 +76,12 @@ public class JsonHandler {
                 list.get(i).setLastChange(lastChange.toString());
                 
                 //replacethe orginal node in the list
-                list.set(1, list.get(i));
+                list.set(i, list.get(i));
             }
             
         }
+        
         String output = gson.toJson(list);
-
         File file = new File(filepath);
         try {
             //delete old file
@@ -112,18 +112,6 @@ public class JsonHandler {
         return output;
     }
 
-    /**
-     * parsing the JSON file into a List of Domain
-     *
-     * @param fileinput
-     * @return
-     */
-    private static List<Node> parseLocalDomainJsonFromFile(String fileinput) {
-        Type founderListType = new TypeToken<ArrayList<Node>>() {
-        }.getType();
-        List<Node> founderList = gson.fromJson(fileinput, founderListType);
-
-        return founderList;
-    }
+   
 
 }
