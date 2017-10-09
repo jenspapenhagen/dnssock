@@ -5,6 +5,7 @@
  */
 package eu.papenhagen.dnssock;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.slf4j.LoggerFactory;
 import spark.Request;
@@ -27,53 +28,79 @@ public class Main {
      */
     public static void main(String[] args) {
         //list get only read once
-        List<Node> list = NodeSerivce.getInstance().getAllNodes();
-        list.forEach((Node n) -> {
-            //get singel IP for one node
-            get("/" + n.getId(), (Request request, Response response) -> "" + n.getIpaddress());
+        List<Node> listOfNodes = NodeSerivce.getInstance().getAllNodes();
+        List<String> listOfNodesIDs = new ArrayList<>(listOfNodes.size());
 
-            //get all Node and IPs
-            get("/all", (Request request, Response response) -> {
-                response.type("application/json");
-                return JsonHandler.getInstance().exportToJSON(NodeSerivce.getInstance().convertNodeToExportNode());
-            });
-
-            //change the ip
-            get("/:" + n.getId() + "/:psw", (Request request, Response response) -> {
-                String id = request.params(":" + n.getId());
-                String token = request.params(":token");
-                String renewIp = request.ip();
-
-                LOG.debug("id " + id);
-                LOG.debug("token " + token);
-                LOG.debug("renewIp " + renewIp);
-
-                if (NodeSerivce.getInstance().checkPassword(id, token)) {
-                    //fill the new ip into domain
-                    Node tempNode = NodeSerivce.getInstance().getNode(id);
-                    tempNode.setIpaddress(renewIp);
-
-                    //update the node in the list
-                    NodeSerivce.getInstance().setNode(tempNode);
-
-                    //return the new ip
-                    return renewIp;
-                }
-
-                response.status(400);
-                LOG.debug("No user with psw found");
-                return "No user with psw found";
-
-            });
-            //e404
-            get("/", (req, res) -> "0.0.0.0");
-
-            //set HTTPS
-            //secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
-            //set none standard Port 4567
-            //port(8080);
+        //fill listOfNodesIDs
+        listOfNodes.forEach((node) -> {
+            listOfNodesIDs.add(node.getId());
+        });
+        
+        //get all Node and IPs
+        get("/all", (Request request, Response response) -> {
+            response.type("application/json");
+            return JsonHandler.getInstance().exportToJSON(NodeSerivce.getInstance().convertNodeToExportNode());
         });
 
+        //get singel IP for one node
+        get("/:id", (Request request, Response response) -> {
+            String id = request.params(":id");
+            if (listOfNodesIDs.contains(id)) {
+                Node tempNode = NodeSerivce.getInstance().getNode(id);
+                return tempNode.getIpaddress();
+            } else {
+                LOG.debug("Node not Found");
+                return "Node not Found";
+            }
+
+        });
+
+
+        //change the ip
+        get("/:id" + "/:psw", (Request request, Response response) -> {
+            String id = request.params(":id");
+            String token = request.params(":token");
+            String renewIp = request.ip();
+            boolean nodeexist = false;
+
+            LOG.debug("id " + id);
+            LOG.debug("token " + token);
+            LOG.debug("renewIp " + renewIp);
+            
+            //check node exist
+            if (listOfNodesIDs.contains(id)) {
+                nodeexist = true;
+            } else {
+                LOG.debug("Node not Found");
+                return "Node not Found";
+            }
+
+
+            if (nodeexist && NodeSerivce.getInstance().checkPassword(id, token)) {
+                //fill the new ip into domain
+                Node tempNode = NodeSerivce.getInstance().getNode(id);
+                tempNode.setIpaddress(renewIp);
+
+                //update the node in the list
+                NodeSerivce.getInstance().setNode(tempNode);
+
+                //return the new ip
+                return renewIp;
+            }
+
+            response.status(400);
+            LOG.debug("wrong Token");
+            
+            return "wrong Token";
+
+        });
+        //e404
+        get("/", (req, res) -> "0.0.0.0");
+
+        //set HTTPS
+        //secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
+        //set none standard Port 4567
+        //port(8080);
         System.out.println("http://localhost:4567/test");
 
     }

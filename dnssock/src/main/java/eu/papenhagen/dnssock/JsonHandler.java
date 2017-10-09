@@ -29,7 +29,7 @@ public class JsonHandler {
 
     private final static Gson gson = new Gson();
 
-    private final static String filepath = "C:\\Go\\domains.json";
+    private final static String filepath = "C:\\EAI\\nodes.json";
 
     public JsonHandler() {
         instance = this;
