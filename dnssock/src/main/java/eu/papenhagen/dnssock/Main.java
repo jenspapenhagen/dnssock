@@ -10,7 +10,7 @@ import java.util.List;
 import org.slf4j.LoggerFactory;
 import spark.Request;
 import spark.Response;
-import static spark.Spark.get;
+import spark.Spark;
 
 /**
  *
@@ -37,13 +37,13 @@ public class Main {
         });
         
         //get all Node and IPs
-        get("/all", (Request request, Response response) -> {
+        Spark.get("/all", (Request request, Response response) -> {
             response.type("application/json");
             return JsonHandler.getInstance().exportToJSON(NodeSerivce.getInstance().convertNodeToExportNode());
         });
 
         //get singel IP for one node
-        get("/:id", (Request request, Response response) -> {
+        Spark.get("/:id", (Request request, Response response) -> {
             String id = request.params(":id");
             if (listOfNodesIDs.contains(id)) {
                 Node tempNode = NodeSerivce.getInstance().getNode(id);
@@ -57,7 +57,7 @@ public class Main {
 
 
         //change the ip
-        get("/:id" + "/:psw", (Request request, Response response) -> {
+        Spark.get("/:id" + "/:token", (Request request, Response response) -> {
             String id = request.params(":id");
             String token = request.params(":token");
             String renewIp = request.ip();
@@ -76,7 +76,7 @@ public class Main {
             }
 
 
-            if (nodeexist && NodeSerivce.getInstance().checkPassword(id, token)) {
+            if (nodeexist && NodeSerivce.getInstance().checkToken(id, token)) {
                 //fill the new ip into domain
                 Node tempNode = NodeSerivce.getInstance().getNode(id);
                 tempNode.setIpaddress(renewIp);
@@ -95,12 +95,12 @@ public class Main {
 
         });
         //e404
-        get("/", (req, res) -> "0.0.0.0");
+        Spark.get("/", (req, res) -> "no node set");
 
         //set HTTPS
-        //secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
+//        Spark.secure(keystoreFilePath, keystorePassword, truststoreFilePath, truststorePassword);
         //set none standard Port 4567
-        //port(8080);
+//        Spark.port(8080);
         System.out.println("http://localhost:4567/test");
 
     }

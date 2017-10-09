@@ -54,7 +54,7 @@ public class NodeSerivce {
      * @param token
      * @return
      */
-    public static Boolean checkPassword(String id, String token) {
+    public static Boolean checkToken(String id, String token) {
         Node node = getNode(id);
         return node.getToken().equals(token);
     }
