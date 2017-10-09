@@ -48,15 +48,15 @@ public class NodeSerivce {
     }
 
     /**
-     * check if the user/psw are in the json file
+     * check if the user/token are in the json file
      *
      * @param id
-     * @param psw
+     * @param token
      * @return
      */
-    public static Boolean checkPassword(String id, String psw) {
+    public static Boolean checkPassword(String id, String token) {
         Node node = getNode(id);
-        return node.getPassword().equals(psw);
+        return node.getToken().equals(token);
     }
 
     /**
@@ -75,7 +75,7 @@ public class NodeSerivce {
 
             //set ID and IP and lastChange TimeStamp
             exportnode.setId(node.getId());
-            exportnode.setIp(node.getIp());
+            exportnode.setIp(node.getIpaddress());
             exportnode.setLastChange(node.getLastChange());
 
             return exportnode;

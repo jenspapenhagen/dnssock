@@ -30,7 +30,7 @@ public class Main {
         List<Node> list = NodeSerivce.getInstance().getAllNodes();
         list.forEach((Node n) -> {
             //get singel IP for one node
-            get("/" + n.getId(), (Request request, Response response) -> "" + n.getIp());
+            get("/" + n.getId(), (Request request, Response response) -> "" + n.getIpaddress());
 
             //get all Node and IPs
             get("/all", (Request request, Response response) -> {
@@ -41,17 +41,17 @@ public class Main {
             //change the ip
             get("/:" + n.getId() + "/:psw", (Request request, Response response) -> {
                 String id = request.params(":" + n.getId());
-                String psw = request.params(":psw");
+                String token = request.params(":token");
                 String renewIp = request.ip();
 
                 LOG.debug("id " + id);
-                LOG.debug("psw " + psw);
+                LOG.debug("token " + token);
                 LOG.debug("renewIp " + renewIp);
 
-                if (NodeSerivce.getInstance().checkPassword(id, psw)) {
+                if (NodeSerivce.getInstance().checkPassword(id, token)) {
                     //fill the new ip into domain
                     Node tempNode = NodeSerivce.getInstance().getNode(id);
-                    tempNode.setIp(renewIp);
+                    tempNode.setIpaddress(renewIp);
 
                     //update the node in the list
                     NodeSerivce.getInstance().setNode(tempNode);

@@ -16,10 +16,10 @@ public class Node {
     @Getter
     private String id;
     @Getter
-    private String password;
+    private String token;
     @Setter
     @Getter
-    private String ip;
+    private String ipaddress;
     @Setter
     @Getter
     private String lastChange;
@@ -27,9 +27,9 @@ public class Node {
     public Node() {
     }
 
-    public Node(String id, String password) {
+    public Node(String id, String tk) {
         this.id = id;
-        this.password = password;
+        this.token = tk;
     }
 
 }
